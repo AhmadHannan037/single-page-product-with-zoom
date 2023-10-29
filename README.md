@@ -4,9 +4,10 @@
 
 1. [Introduction](#introduction)
 2. [Setup Guide](#setup-guide)
-3. [Tech Stack](#tech-stack)
-4. [Project Overview](#project-overview)
-5. [Usage](#usage)
+3. [Demo](#demo)
+4. [Tech Stack](#tech-stack)
+5. [Project Overview](#project-overview)
+6. [Usage](#usage)
 
 ## Introduction
 
@@ -55,13 +56,21 @@ npm run build
 ```
 The production-ready files will be located in the dist directory.
 
+## Demo
+[![Watch the Demo Video](./src/assets/images/demo1.PNG)](https://www.loom.com/share/aacad1cfb60e47dead84e429dc04d102?sid=61fdd7f9-85c1-46cf-b378-ac282d0538ce)
+
+Click on the image above to watch a demo of our project in action.
+
+I have deployed it to Netlify, you can check it out on the following link: https://653ea9cb476a61250864a435--clever-souffle-bce707.netlify.app/
+
+
 ## Tech Stack
 Our project utilizes a robust technology stack, including:
 
-Vue.js: A progressive JavaScript framework for building user interfaces.
-TailwindCSS: A modern CSS library, with responsive at scale
-Webpack: A popular build tool for bundling and managing assets.
-Babel: For transpiling JavaScript to ensure cross-browser compatibility.
+- Vue.js: A progressive JavaScript framework for building user interfaces.
+- TailwindCSS: A modern CSS library, with responsive at scale
+- Webpack: A popular build tool for bundling and managing assets.
+- Babel: For transpiling JavaScript to ensure cross-browser compatibility.
 ## Project Overview
 
 ### Purpose
