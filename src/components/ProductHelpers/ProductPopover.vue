@@ -72,14 +72,24 @@ props: product (Object)
             {{ product.storage }}
           </h4>
           <!-- Display Images -->
-          <img
+          <div
             v-if="activeTab === 'image'"
-            :src="product.media.slider[selectedImage].url"
-            :alt="product.media.slider[selectedImage].alt"
-            class="mx-auto h-48 sm:h-96 sm:max-h-96 sm:max-w-full"
-            @click="toggleZoomedIn"
-            :class="{ 'zoomed-in': isZoomedIn, 'zoomed-out': !isZoomedIn }"
-          />
+            class="image-container"
+            @mousemove="handleMouseMove"
+            @touchmove="handleTouchMove"
+            @click="handleClick"
+            @touchstart="handleTouchStart"
+            ref="imageContainer"
+          >
+            <img
+              v-if="activeTab === 'image'"
+              :src="product.media.slider[selectedImage].url"
+              :alt="product.media.slider[selectedImage].alt"
+              class="mx-auto h-48 sm:h-96 sm:max-h-96 sm:max-w-full image-popover"
+              ref="imagePopover"
+              :class="{ 'zoomed-in': isZoomedIn, 'zoomed-out': !isZoomedIn }"
+            />
+          </div>
           <!-- Display Videos -->
           <video
             v-else-if="activeTab === 'video'"
@@ -167,6 +177,7 @@ export default {
       activeTab: "image",
       selectedImage: 0,
       isZoomedIn: false,
+      lastTap: 0,
     };
   },
   computed: {
@@ -200,6 +211,74 @@ export default {
     },
     toggleZoomedIn() {
       this.isZoomedIn = !this.isZoomedIn;
+    },
+
+    /**
+     * handle zoom with mouseover event
+     *
+     * @param {String} event
+     * @return {void}
+     */
+    handleMouseMove(event) {
+      if (this.isZoomedIn) {
+        const img = this.$refs.imagePopover;
+        const x = event.clientX - event.target.offsetLeft;
+        const y = event.clientY - event.target.offsetTop;
+        img.style.transformOrigin = `${x}px ${y}px`;
+      }
+    },
+
+    /**
+     * Check double tap on mobile screen
+     *
+     * @param {String} event
+     * @return {void}
+     */
+    handleTouchStart() {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - this.lastTap;
+
+      if (tapLength < 500 && tapLength > 0) {
+        // Double tap detected
+        this.toggleZoomedIn();
+        this.lastTap = 0;
+      } else {
+        // Single tap
+        this.lastTap = currentTime;
+      }
+    },
+
+    /**
+     * handle zoom with touchmove event
+     *
+     * @param {String} event
+     * @return {void}
+     */
+    handleTouchMove(event) {
+      if (this.isZoomedIn) {
+        const img = this.$refs.imagePopover;
+        const touch = event.touches[0];
+        const x = touch.clientX - event.target.offsetLeft;
+        const y = touch.clientY - event.target.offsetTop;
+        img.style.transformOrigin = `${x}px ${y}px`;
+      }
+    },
+
+    /**
+     * stop click functionality on mobile for double tap
+     *
+     * @param {String} event
+     * @return {void}
+     */
+    handleClick(event) {
+      // Prevent the click event on touch devices
+      if ("ontouchstart" in window || navigator.maxTouchPoints) {
+        event.preventDefault();
+      } else {
+        this.toggleZoomedIn();
+      }
+
+      // Handle the click event as needed
     },
 
     /**
@@ -241,15 +320,26 @@ export default {
 <style scoped>
 .zoomed-in {
   cursor: zoom-out;
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  transition: transform 0.3s; /* Smooth zoom effect */
-  transform: scale(1.3); /* Zoom scale factor, adjust as needed */
-  z-index: 100; /* Ensures the zoomed-in image is on top */
+  transform: scale(2);
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
 }
 .zoomed-out {
   cursor: zoom-in;
+  transform-origin: center;
+  transform: scale(1);
 }
+.image-container {
+  height: 400px;
+  width: 300px;
+  overflow: hidden;
+}
+@media (max-width: 600px) {
+  .image-container {
+    width: 227px;
+  }
+}
+
 </style>
